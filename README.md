@@ -53,3 +53,8 @@ Scripts for deep segmentation with custom losses, metrics, light models, pre- an
 ## Folders in the repository:
 
 **models** - pretrained models
+
+## Examples
+
+**car segmentation in bounding box (on test images)**
+![UNetMCT results on test images](/assets/Results_on_test.jpg)
