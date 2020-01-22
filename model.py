@@ -93,6 +93,15 @@ def dice_sparsed(sparse_thresh = 10):
         return dice_coef_sparsed_value
     return dice_coef_sparsed
 
+def sparsed_dice_loss_multilabel(num_labels, sparse_thresh):
+    def sparsed_dice_loss_multi(y_true, y_pred):
+        sparsed_dice_sum = 0
+        for index in range(num_labels):
+            dice_sparsed_f = dice_sparsed(sparse_thresh)
+            sparsed_dice_sum += dice_sparsed_f(y_true[:, :, :, index], y_pred[:, :, :, index])  # output tensor have shape (batch_size,
+        return 1. - sparsed_dice_sum / num_labels  # width, height, numLabels)
+    return sparsed_dice_loss_multi
+
 
 def categorical_crossentropy_loss(y_true, y_pred):
     cce = CategoricalCrossentropy()
@@ -104,15 +113,15 @@ def background_dice_loss(y_true, y_pred):
     return bdl
 
 def loss_function(y_true, y_pred):
-    sum_loss =  categorical_crossentropy_loss(y_true, y_pred) + background_dice_loss(y_true, y_pred)
+    sum_loss = categorical_crossentropy_loss(y_true, y_pred) + background_dice_loss(y_true, y_pred)
     return sum_loss
 
-# def loss_function_1(y_true, y_pred):
-#     cce = CategoricalCrossentropy()
-#     ccel = cce(y_true, y_pred)
-#     bdl = dice_coef_loss(y_true[:, :, :, 0], y_pred[:, :, :, 0])
-#     sum_loss = ccel + bdl
-#     return sum_loss
+def loss_function_multilabel(num_labels, sparse_thresh = 10):
+    def loss_multilabel(y_true, y_pred):
+        sparsed_dice_loss_multilabel_f = sparsed_dice_loss_multilabel(num_labels, sparse_thresh)
+        sum_loss =  categorical_crossentropy_loss(y_true, y_pred) + sparsed_dice_loss_multilabel_f(y_true, y_pred)
+        return sum_loss
+    return loss_multilabel
 
 def dice_0(y_true, y_pred):
     return dice_coef(y_true[:,:,:,0], y_pred[:,:,:,0])
