@@ -56,5 +56,5 @@ Scripts for deep segmentation with custom losses, metrics, light models, pre- an
 
 ## Examples
 
-**car segmentation in bounding box (on test images)**
+**Car segmentation in bounding box (on test images)**
 ![UNetMCT results on test images](/assets/Results_on_test.jpg)
