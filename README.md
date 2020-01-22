@@ -12,14 +12,16 @@ Scripts for deep segmentation with custom losses, metrics, light models, pre- an
 **config.py** - all main configs and settings for scripts
 
               TRAIN_FLAG = True if we want to train new model or tune pretrained model from MODEL_PATH
-                                 on data from TRAIN_PATH and VAL_PATH
+                                on data from TRAIN_PATH and VAL_PATH
                                  
-              TUNE_FLAG = True if we want to tune pretrained model from MODEL_PATH on data from TRAIN_PATH and VAL_PATH
+              TUNE_FLAG = True if we want to tune pretrained model from MODEL_PATH 
+                               on data from TRAIN_PATH and VAL_PATH
               
               EVALUATION_FLAG = True if we want to evaluate pretrained model on data from VAL_PATH
               
               If TRAIN_FLAG == False and TUNE_FLAG == False and EVALUATION_FLAG == False
-              prediction results of pretrained model from MODEL_PATH on TEST_PATH will be calculated and saved to RESULT_PATH
+              prediction results of pretrained model from MODEL_PATH on TEST_PATH will be calculated 
+              and saved to RESULT_PATH
              
               MASK_DICT - dictionary with indexes and color pallete for object categories (classes):
               {              
@@ -31,7 +33,9 @@ Scripts for deep segmentation with custom losses, metrics, light models, pre- an
 **data_preprocess.py** - data generators, dataset preparation, data post processing
 
               Features:                  
-                  - Conversion grayscale masks with class indexes to color mask with pallete according to mask_dict                             - Training generator based on color masks with pallete
+                  - Conversion grayscale masks with class indexes to color mask with pallete 
+                    according to mask_dict
+                  - Training generator based on color masks with pallete
 
 **model.py** - different metrics, losses and segmentation model
 
