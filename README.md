@@ -11,7 +11,9 @@ Scripts for deep segmentation with custom losses, metrics, light models, pre- an
 
 **model.py** - different metrics, losses and segmentation model
 
-              Implemented models: UNetMCT (Light UNet-like architecture with ConvTranspose layers)
+              Implemented models: 
+                  
+                  UNetMCT (Light UNet-like architecture with ConvTranspose layers)
 
 ## Folders in the repository:
 
