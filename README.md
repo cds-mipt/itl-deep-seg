@@ -22,6 +22,13 @@ Scripts for deep segmentation with custom losses, metrics, light models, pre- an
               If TRAIN_FLAG == False and TUNE_FLAG == False and EVALUATION_FLAG == False
               prediction results of pretrained model from MODEL_PATH on TEST_PATH will be calculated 
               and saved to RESULT_PATH
+              
+              # Dataset tree is
+              # TRAIN_PATH -- IMAGES_FOLDER_NAME
+              #            |- MASKS_FOLDER_NAME
+              #
+              # VAL_PATH -- IMAGES_FOLDER_NAME
+              #          |- MASKS_FOLDER_NAME
              
               MASK_DICT - dictionary with indexes and color pallete for object categories (classes):
               {              
