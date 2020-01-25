@@ -1,0 +1,6 @@
+# how to work with .gitignore: http://orlov.io/ru/articles/podrobnee-o-faile-gitignore
+/assets/
+/logs/
+/models/
+/__pycache__/
+.idea/

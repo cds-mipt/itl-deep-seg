@@ -1,22 +1,29 @@
-from model import *
-from data_processing import *
-from tensorflow.keras import callbacks
-from tensorflow.keras.callbacks import ModelCheckpoint
+from config import *
+import tensorflow
+
+if tensorflow.__version__ > '2.':
+    # tensorflow 2
+    from tensorflow.keras import callbacks
+    from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler, TensorBoard
+
+else:
+    # tensorflow 1 + keras
+    from keras import callbacks
+    from keras.callbacks import ModelCheckpoint, LearningRateScheduler, TensorBoard
 
 import os
 import time
+import math
 
-from config import *
 
-import tensorflow as tf
 
-os.environ["CUDA_VISIBLE_DEVICES"] = GPU_ID
+from data_processing import *
+
 train_flag = TRAIN_FLAG
 tune_flag = TUNE_FLAG
 evaluation_flag = EVALUATION_FLAG
 
-save_dir = SAVE_DIR
-model_name = MODEL_NAME
+save_dir = SAVE_MODEL_DIR
 
 # dictionary with:
 # "cateogory_name": [index, (R, G, B)]
@@ -54,10 +61,11 @@ test_sample_len = len(os.listdir(val_path+'/'+IMAGES_FOLDER_NAME))
 train_steps = train_sample_len//batch_size
 test_steps = test_sample_len//eval_batch_size
 
+no_compile = NO_COMPILE
 
 os.makedirs(current_dir+'/logs',exist_ok=True)
 timestr = time.strftime("%Y-%m-%d-%H-%M-%S")
-log_filename = current_dir+'/logs/log-'+model_name+'-'+ timestr +'.txt'
+log_filename = current_dir+'/logs/log-'+deep_model.name+'-'+ timestr +'.txt'
 with open(log_filename, "a") as log_file:
     log_file.write("Experiment start: "+ log_filename + "\n")
     log_file.write("Input dataset(s):\n")
@@ -82,17 +90,39 @@ if not tune_flag:
 with open(log_filename, "a") as log_file:
     log_file.write("Model path: "+ str(model_path) + "\n")
 
-    model = unet_light_mct(pretrained_weights=model_path, input_size=(image_height, image_width, 3),
-                       learning_rate=learning_rate, n_classes=num_class, no_compile=False)
+    model = deep_model
+
+    model_loss = loss
+
+    model_metrics = metrics
+
+    model_optimizer = optimizer
+
+    if no_compile == False:
+        if tensorflow.__version__ > '2.':
+            model.compile(optimizer=model_optimizer,
+                          run_eagerly=True,  # Tensorflow 2 only
+                          loss=model_loss,
+                          metrics=model_metrics)
+        else:
+            model.compile(optimizer=model_optimizer,
+                          loss=model_loss,
+                          metrics=model_metrics)
+
+    if (model_path):
+        model.load_weights(model_path)
+
+
     stringlist = []
     model.summary(print_fn=lambda x: stringlist.append(x))
     short_model_summary = "\n".join(stringlist)
 
 
-
     with open(log_filename, "a") as log_file:
         log_file.write('\nModel summary:\n')
         log_file.write(short_model_summary)
+        log_file.write('Model_Name:' + str(model.name) + '\n')
+        log_file.write('Optimizer:' + str(optimizer) + '\n')
         log_file.write('Metrics:' + str(model.metrics) + '\n')
         log_file.write('Image_Size: ' + str(image_width) + ' x '+str(image_height) + '\n')
         log_file.write('Batch_Size: ' + str(batch_size) + '\n')
@@ -126,10 +156,17 @@ with open(log_filename, "a") as log_file:
                                   mask_dict=mask_dict
                                   )
 
-
-        model_checkpoint = ModelCheckpoint(current_dir + '/' +save_dir+ '/'+ model_name + timestr +
-                                           '.{epoch:02d}-tloss-{loss:.4f}-tdice-{dice_0:.4f}-vdice-{val_dice_0:.4f}.hdf5',
-                                           monitor='loss', verbose=1, save_best_only=True, save_weights_only=True, save_format='h5')
+        if tensorflow.__version__ > '2.':
+            model_checkpoint = ModelCheckpoint(current_dir + '/' +save_dir+ '/'+ model.name +'-'+ timestr +
+                                               '.{epoch:02d}-tloss-{loss:.4f}-vloss{val_loss:.4f}.hdf5',
+                                               monitor='loss', verbose=1, save_best_only=True, save_weights_only=True,
+                                               save_format='h5'
+                                               )
+        else:
+            model_checkpoint = ModelCheckpoint(current_dir + '/' + save_dir + '/' + model.name + '-' + timestr +
+                                               '.{epoch:02d}-tloss-{loss:.4f}-vloss{val_loss:.4f}.hdf5',
+                                               monitor='loss', verbose=1, save_best_only=True, save_weights_only=True
+                                               )
 
         def scheduler(epoch, learning_rate):
             if epoch < epochs_schedule_step:
@@ -137,18 +174,17 @@ with open(log_filename, "a") as log_file:
             else:
                 drop = drop_schedule_coef
                 epochs_drop = epochs_schedule_step
-                lrate = learning_rate * tf.math.pow(drop,
-                                                 tf.math.floor((1 + epoch) / epochs_drop))
+                lrate = learning_rate * tensorflow.math.pow(drop,tensorflow.math.floor((1 + epoch) / epochs_drop))
                 return lrate
 
 
-        callback_LearningRateScheduler = tensorflow.keras.callbacks.LearningRateScheduler(scheduler)
-
         callbacks = [model_checkpoint,
                      callbacks.CSVLogger(log_filename, separator=',', append=True),
-                     tensorflow.keras.callbacks.TensorBoard(log_dir='./logs'),
-                     callback_LearningRateScheduler
-                     ]
+                     TensorBoard(log_dir=TENSOR_BOARD_LOGS_PATH)]
+
+        if tensorflow.__version__ > '2.':
+            callbacks.append(LearningRateScheduler(scheduler))
+
 
         start_time = time.time()
 
