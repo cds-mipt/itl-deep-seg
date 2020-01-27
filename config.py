@@ -66,20 +66,20 @@ MASK_DICT = {
 # #MODEL_PATH = '/models/unet_light_mct2020-01-20-18-32-22.31-tloss-0.5139-tdice-0.7674-vdice-0.7584_car_segm.hdf5'
 # MODEL_PATH = '/models/unet_light_mct2020-01-21-12-31-11.14-tloss-0.5585-tdice-0.7510-vdice-0.7397_car_segm.hdf5'
 #
-TRAIN_PATH = '/datasets/Roof_defects_dataset/dataset/augmented_dataset/train'
-VAL_PATH = '/datasets/Roof_defects_dataset/dataset/augmented_dataset/test'
-RESULT_PATH = "/datasets/Roof_defects_dataset/dataset/results_multiclass_unet_test_1"
-TEST_PATH = "/datasets/Roof_defects_dataset/dataset/augmented_dataset/test/source"
+# TRAIN_PATH = '/datasets/Roof_defects_dataset/dataset/augmented_dataset/train'
+# VAL_PATH = '/datasets/Roof_defects_dataset/dataset/augmented_dataset/test'
+# RESULT_PATH = "/datasets/Roof_defects_dataset/dataset/results_multiclass_unet_test_1"
+# TEST_PATH = "/datasets/Roof_defects_dataset/dataset/augmented_dataset/test/source"
 
-# TRAIN_PATH = '/media/cds-pc3/Data/roof_defects_dataset/augmented_dataset/train'
-# VAL_PATH = '/media/cds-pc3/Data/roof_defects_dataset/augmented_dataset/test'
-# RESULT_PATH = "/media/cds-pc3/Data/roof_defects_dataset/results_multiclass_unet_test_1"
-# TEST_PATH = "/media/cds-pc3/Data/roof_defects_dataset/test/source"
+TRAIN_PATH = '/home/cds-y/Datasets/roof_defects_dataset/augmented_dataset/train'
+VAL_PATH = '/home/cds-y/Datasets/roof_defects_dataset/augmented_dataset/test'
+RESULT_PATH = "/home/cds-y/Datasets/roof_defects_dataset/results_multiclass_unet_test_1"
+TEST_PATH = "/home/cds-y/Datasets/roof_defects_dataset/augmented_dataset/test/source"
 
 SAVE_MODEL_DIR = 'models'
 MODEL_PATH = '/models/unet_light_mct2020-01-21-12-31-11.14-tloss-0.5585-tdice-0.7510-vdice-0.7397_car_segm.hdf5'
 
-TENSOR_BOARD_LOGS_PATH = './logs'
+TENSOR_BOARD_LOGS_PATH = './logs_tb'
 
 # IMAGES_FOLDER_NAME = 'images'
 # MASKS_FOLDER_NAME = 'masks'
@@ -89,13 +89,14 @@ MASKS_FOLDER_NAME = 'mask'
 
 ##----------- Augmentor settings  ---------------------------------------------
 
-AUGMENT_CONFIG = dict(rotation_range=0.2,
-                    width_shift_range=0.05,
-                    height_shift_range=0.05,
-                    shear_range=0.05,
-                    zoom_range=0.05,
-                    horizontal_flip=True,
-                    fill_mode='nearest')
+# AUGMENT_CONFIG = dict(rotation_range=0.2,
+#                     width_shift_range=0.05,
+#                     height_shift_range=0.05,
+#                     shear_range=0.05,
+#                     zoom_range=0.05,
+#                     horizontal_flip=True,
+#                     fill_mode='nearest')
+AUGMENT_CONFIG = dict()
 
 ##----------- Calculate number of classes on base of MASK_DICT  ---------------
 
@@ -119,10 +120,7 @@ NO_COMPILE = False
 
 ##-------------- Set model loss function ---------------------------------------
 
-loss = loss_function_multilabel(num_labels=n_classes,
-                                smooth=1e-5,
-                                sparse_thresh=10,
-                                coefs=[1, 1.44, 1.49, 4.4, 44.9, 62.2])
+loss = categorical_crossentropy_loss
 
 ##-------------- Set model metrics ---------------------------------------------
 

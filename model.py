@@ -24,12 +24,12 @@ else:
     # tensoflow 1 + keras
 
     # Enable dynamic memory allocation on GPU in tf1-------------------------------------------
-    # from keras.backend.tensorflow_backend import set_session
-    # config = tensorflow.ConfigProto()
-    # config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
-    # config.log_device_placement = True  # to log device placement (on which device the operation ran)
-    # sess = tensorflow.Session(config=config)
-    # set_session(sess)
+    from keras.backend.tensorflow_backend import set_session
+    config = tensorflow.ConfigProto()
+    config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+    config.log_device_placement = True  # to log device placement (on which device the operation ran)
+    sess = tensorflow.Session(config=config)
+    set_session(sess)
     # -----------------------------------------------------------------------------------------
     from keras.models import *
     from keras.layers import *
@@ -170,15 +170,13 @@ def loss_function(y_true, y_pred):
     sum_loss = categorical_crossentropy_loss(y_true, y_pred) + background_dice_loss(y_true, y_pred)
     return sum_loss
 
-def loss_function_multilabel(num_labels, smooth=1e-5, sparse_thresh = 10, coefs=None):
+def loss_function_multilabel(num_labels=, smooth=1e-5, sparse_thresh=10, coefs=[1, 1.44, 1.49, 4.4, 44.9, 62.2]):
     def loss_multilabel(y_true, y_pred):
-        # sparsed_dice_loss_multilabel_f = sparsed_dice_loss_multilabel(num_labels=num_labels,
-        #                                                               smooth=smooth,
-        #                                                               sparse_thresh=sparse_thresh,
-        #                                                               coefs=coefs)
-        #dice_loss_multilabel_f = dice_loss_multilabel(num_labels = num_labels)
-        sum_loss =  categorical_crossentropy_loss(y_true, y_pred) #+ background_dice_loss(y_true, y_pred)
-        #dice_loss_multilabel_f(y_true, y_pred) #+ sparsed_dice_loss_multilabel_f(y_true, y_pred)
+        sparsed_dice_loss_multilabel_f = sparsed_dice_loss_multilabel(num_labels=num_labels,
+                                                                      smooth=smooth,
+                                                                      sparse_thresh=sparse_thresh,
+                                                                      coefs=coefs)
+        sum_loss =  categorical_crossentropy_loss(y_true, y_pred) + sparsed_dice_loss_multilabel_f(y_true, y_pred)
         return sum_loss
     return loss_multilabel
 
