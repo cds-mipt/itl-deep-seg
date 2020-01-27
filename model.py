@@ -215,46 +215,6 @@ def unet_light_mct(input_size = (256,256,1),n_classes = 1):
 
     model = Model(inputs=inputs, outputs=conv10, name='unet_light_mct')
 
-    # metrics = [dice_0]
-    # for channel_id in range(n_classes):
-    #     metrics.append(iou_metric_softmax(smooth=1e-5, channel_id=channel_id))
-    # # iou_car_metric = iou_metric_softmax(smooth=1e-5, channel_id=1)
-    # # iou_background_metric = iou_metric_softmax(smooth=1e-5, channel_id=0)
-    #
-    # if no_compile == False:
-    #     if tensorflow.__version__ > '2.':
-    #         model.compile(optimizer=Adam(lr=learning_rate),
-    #                       run_eagerly = True,
-    #                       loss=loss_function,
-    #                       metrics=metrics)
-    #     else:
-    #         model.compile(optimizer=Adam(lr=learning_rate),
-    #                       run_eagerly=True,
-    #                       loss=loss_function,
-    #                       metrics=metrics)
-    # unet_loss = loss_function_multilabel(num_labels=n_classes, smooth=1e-5, sparse_thresh=10,
-    #                                      coefs=[1, 1.44, 1.49, 4.4, 44.9, 62.2])
-    #
-    # metrics = [sparsed_dice_loss_multilabel(num_labels=n_classes, smooth=1e-5, sparse_thresh=10,
-    #                                         coefs=[1, 1.44, 1.49, 4.4, 44.9, 62.2])]
-    # for channel_id in range(n_classes):
-    #     # metrics.append(iou_metric_softmax(smooth=1e-5, channel_id=channel_id))
-    #     metrics.append(dice_sparsed_metric(smooth=1e-5, thresh=10, channel_id=channel_id))
-    #
-    # if no_compile == False:
-    #     if tensorflow.__version__ > '2.':
-    #         model.compile(optimizer=Adam(lr=learning_rate),
-    #                       run_eagerly=True,  # Tensorflow 2 only
-    #                       loss=unet_loss,
-    #                       metrics=metrics)
-    #     else:
-    #         model.compile(optimizer=Adam(lr=learning_rate),
-    #                       loss=unet_loss,
-    #                       metrics=metrics)
-
-    # if(pretrained_weights):
-    # 	model.load_weights(pretrained_weights)
-
     return model
 
 def unet(input_size = (256,256,1), n_classes = 6):
